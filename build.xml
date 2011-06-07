@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WikipediaAbstSearcher" default="compile">
+
+  <property name="version" value="0.0.1" />
+  <property name="source" value="./src" />
+  <property name="classes" value="./bin" />
+  <property name="lib" value="./lib" />
+  <property name="classpath"
+	    value="${classes}:${lib}/lucene-core-3.2.0.jar" />
+  <property name="jarfile" value="wikipedia-abst-searcher-${version}.jar" />
+  <property name="abstfile" value="data/enwiki-20110526-abstract.xml" />
+
+  <target name="prepare">
+    <mkdir dir="${classes}"/>
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${source}"
+	   includeantruntime="false"
+           destdir="${classes}">
+      <classpath>
+	<pathelement path="${classpath}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-with-unchecked" depends="prepare">
+    <javac srcdir="${source}"
+	      includeantruntime="false"
+           destdir="${classes}">
+      <compilerarg value="-Xlint:unchecked" />
+    </javac>
+  </target>
+
+  <target name="search" depends="compile">
+    <java classname="kui.wikipedia.abst.search.Searcher"
+	  classpath="${classpath}" />
+  </target>
+
+  <target name="index" depends="compile">
+    <java classname="kui.wikipedia.title.search.IndexWriter"
+	  classpath="${classpath}"
+	  inputstring=""
+	  />
+  </target>
+
+  <target name="clean">
+    <delete dir="${classess}" file="${jarfile}"/>
+  </target>
+
+  <target name="package" depends="compile">
+    <echo message="${classpath}" />
+    <jar basedir="${classes}" jarfile="${jarfile}" update="true">
+      <manifest>
+	<attribute name="Main-Class" value="kui.wikipedia.title.search.Searcher" />
+	<attribute name="Class-Path" value="${classpath}" />
+      </manifest>
+    </jar>
+  </target>
+
+</project>
